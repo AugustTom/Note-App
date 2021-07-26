@@ -1,21 +1,18 @@
 <template>
-
-
-
   <div id="app">
-    <ul id="notes">
-      <li v-for="note in notes" v-bind:key="note.id">{{ note.content }}</li>
-    </ul>
 
     <div class="statistic">
       <div id="total">
         <h2>Total</h2>
+        <h3>{{notes.length}}</h3>
       </div>
       <div id="completed">
         <h2>Completed</h2>
+        <h3>{{completed}}</h3>
       </div>
       <div id="not-completed">
         <h2>Not completed</h2>
+        <h3>{{notCompleted}}</h3>
       </div>
     </div>
 
@@ -28,6 +25,15 @@
           <th>Content</th>
           <th>Status</th>
         </tr>
+
+        <tr v-for="note in notes" v-bind:key="note.id">
+          <input type="checkbox" id="checkbox" v-model="checked">
+          <td>{{ note.id }}</td>
+          <td>{{ note.title }}</td>
+          <td>{{ note.content }}</td>
+          <td>{{ note.status }}</td>
+        </tr>
+
       </table>
     </div>
 
@@ -62,7 +68,9 @@ export default {
 
   data() {
     return {
-      notes: []
+      notes: [],
+      completed: 0,
+      notCompleted: 0,
     }
   },
 
@@ -71,6 +79,8 @@ export default {
         .then(res => res.json())
         .then(json => {
           this.notes = json.notes
+          this.completed = this.notes.filter(note => note.status == "Completed").length
+          this.notCompleted = this.notes.filter(note => note.status == "Not completed").length
         })
   }
 }
