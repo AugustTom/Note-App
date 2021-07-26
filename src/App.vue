@@ -1,5 +1,12 @@
 <template>
+
+
+
   <div id="app">
+    <ul id="notes">
+      <li v-for="note in notes" v-bind:key="note.id">{{ note.content }}</li>
+    </ul>
+
     <div class="statistic">
       <div id="total">
         <h2>Total</h2>
@@ -15,6 +22,7 @@
     <div class="note-table">
       <table>
         <tr>
+          <input type="checkbox" id="checkbox" v-model="checked">
           <th>ID</th>
           <th>Title</th>
           <th>Content</th>
@@ -52,6 +60,19 @@
 export default {
   name: 'App',
 
+  data() {
+    return {
+      notes: []
+    }
+  },
+
+  created() {
+    fetch("/api/notes")
+        .then(res => res.json())
+        .then(json => {
+          this.notes = json.notes
+        })
+  }
 }
 </script>
 
