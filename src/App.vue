@@ -27,7 +27,7 @@
         </tr>
 
         <tr v-for="note in notes" v-bind:key="note.id" v-bind:id="'id-'+note.id">
-          <input type="checkbox" class="checkbox" v-bind:value="'id-'+note.id" v-model="checked" @change="deleteConfirmation">
+          <input type="checkbox" class="checkbox" v-bind:value="note.id" v-model="checked" @change="deleteConfirmation">
           <td>{{ note.id }}</td>
           <td>{{ note.title }}</td>
           <td>{{ note.content }}</td>
@@ -46,7 +46,7 @@
       <form action="">
         <input type="text" ref="title" id="tile" placeholder="Add title..." required>
         <input type="text" ref="content" id="content" placeholder="Add your note..." required>
-        <input type="submit" value="Save" @click="createNew">
+        <input type="button" value="Save" @click="createNew">
         <input type="button" value="Cancel" @click="cancelNew">
       </form>
     </div>
@@ -55,7 +55,7 @@
       <form>
         <span>Do you want to delete this note?</span>
         <button id="no" @click="cancelDelete">No</button>
-        <button type="submit" id="yes" @click="createNew">Yes</button>
+        <button type="submit" id="yes" @click="deleteNote">Yes</button>
       </form>
     </div>
 
@@ -90,13 +90,16 @@ export default {
       this.$refs['new-note'].removeAttribute('hidden')
     },
     cancelNew(){
-      this.$refs['title'].textContent = ""
-      this.$refs['content'].textContent = ""
-      this.$refs['new-note'].setAttribute("hidden","hidden")
+      this.$refs.title.value = ""
+      this.$refs.content.value = ""
+      this.$refs["new-note"].setAttribute("hidden","hidden")
     },
     deleteConfirmation(){
-      console.log(this.checked)
-      this.$refs['delete-alert'].removeAttribute('hidden')
+      if (this.checked.length > 0) {
+        this.$refs['delete-alert'].removeAttribute('hidden')
+      } else{
+        this.$refs['delete-alert'].setAttribute('hidden','hidden')
+      }
     },
     cancelDelete(e){
       e.preventDefault()
@@ -116,6 +119,20 @@ export default {
           .then(data => this.notes.push(data.note));
       this.cancelNew()
     },
+
+    async deleteNote(e){
+      e.preventDefault()
+      let id = this.checked.pop()
+      const requestOptions = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id:id })
+      };
+      await fetch("api/notes/" + id, requestOptions)
+
+      this.notes = this.notes.filter(note => note.id !== id)
+      this.cancelDelete(e)
+    }
 
   }
 }

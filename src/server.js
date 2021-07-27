@@ -19,10 +19,6 @@ export function makeServer({ environment = "development" } = {}) {
                 title: "fugiat veniam minus", content: "Lorem ipsum", status: "Not completed"})
         },
 
-        deleteNote(schema,request){
-            let id = request.params.id
-            return schema.notes.find(id).destroy()
-        },
 
         routes() {
 
@@ -45,8 +41,9 @@ export function makeServer({ environment = "development" } = {}) {
             })
 
             this.delete("/notes/:id",  (schema, request) => {
-                return this.deleteNote(schema,request)
-
+                let id = request.params.id
+                schema.notes.find(id).destroy()
+                return id
             })
 
         },
