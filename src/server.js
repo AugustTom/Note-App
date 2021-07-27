@@ -1,7 +1,7 @@
 import { Server, Model } from 'miragejs'
 
 export function makeServer({ environment = "development" } = {}) {
-
+    let idCount = 4
     let server = new Server({
         environment,
 
@@ -19,12 +19,34 @@ export function makeServer({ environment = "development" } = {}) {
                 title: "fugiat veniam minus", content: "Lorem ipsum", status: "Not completed"})
         },
 
+        deleteNote(schema,request){
+            let id = request.params.id
+            return schema.notes.find(id).destroy()
+        },
+
         routes() {
 
             this.namespace = "api"
 
             this.get("/notes", schema => {
                 return schema.notes.all()
+            })
+
+            this.post("/notes/add",  (schema, request) => {
+                console.log(request)
+                let attrs = JSON.parse(request.requestBody)
+
+                attrs.id = idCount
+                attrs.status = "New"
+                idCount ++
+                let note = schema.notes.create(attrs)
+                console.log(note)
+                return note
+            })
+
+            this.delete("/notes/:id",  (schema, request) => {
+                return this.deleteNote(schema,request)
+
             })
 
         },
