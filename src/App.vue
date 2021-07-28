@@ -43,10 +43,10 @@
 
     <div id="new-note" ref="new-note" hidden>
       <h1>Add note</h1>
-      <form action="">
-        <input type="text" ref="title" id="tile" placeholder="Add title..." required>
-        <input type="text" ref="content" id="content" placeholder="Add your note..." required>
-        <input type="button" value="Save" @click="createNew" >
+      <form>
+        <input type="text" ref="title" id="tile" placeholder="Add title..." v-model="titleIn">
+        <input type="text" ref="content" id="content" placeholder="Add your note..." v-model="contentIn">
+        <input type="submit" value="Save" @click="createNew" v-bind:disabled="!( titleIn && contentIn)" >
         <input type="button" value="Cancel" @click="cancelNew">
       </form>
     </div>
@@ -75,6 +75,8 @@ export default {
       checked: [],
       sortBy: 'id',
       sortDirection: 'asc',
+      titleIn:'',
+      contentIn:''
     }
   },
   created() {
