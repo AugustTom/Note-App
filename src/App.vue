@@ -20,10 +20,10 @@
       <table>
         <tr>
           <input type="checkbox" class="checkbox" v-model="checked">
-          <th>ID</th>
-          <th>Title</th>
-          <th>Content</th>
-          <th>Status</th>
+          <th @click="sort('id')" v-bind:class="[sortBy === 'id' ? sortDirection : '']">ID</th>
+          <th @click="sort('title')" v-bind:class="[sortBy === 'title' ? sortDirection : '']">Title</th>
+          <th @click="sort('content')" v-bind:class="[sortBy === 'content' ? sortDirection : '']">Content</th>
+          <th @click="sort('status')" v-bind:class="[sortBy === 'status' ? sortDirection : '']">Status</th>
         </tr>
 
         <tr v-for="note in notes" v-bind:key="note.id" v-bind:id="'id-'+note.id">
@@ -46,7 +46,7 @@
       <form action="">
         <input type="text" ref="title" id="tile" placeholder="Add title..." required>
         <input type="text" ref="content" id="content" placeholder="Add your note..." required>
-        <input type="button" value="Save" @click="createNew">
+        <input type="button" value="Save" @click="createNew" >
         <input type="button" value="Cancel" @click="cancelNew">
       </form>
     </div>
@@ -72,17 +72,18 @@ export default {
       notes: [],
       completed: 0,
       notCompleted: 0,
-      checked: []
+      checked: [],
+      sortBy: 'id',
+      sortDirection: 'asc',
     }
   },
-
   created() {
     fetch("/api/notes")
         .then(res => res.json())
         .then(json => {
           this.notes = json.notes
-          this.completed = this.notes.filter(note => note.status == "Completed").length
-          this.notCompleted = this.notes.filter(note => note.status == "Not completed").length
+          this.completed = this.notes.filter(note => note.status === "Completed").length
+          this.notCompleted = this.notes.filter(note => note.status === "Not completed").length
         })
   },
   methods: {
@@ -106,7 +107,13 @@ export default {
       this.checked.pop()
       this.$refs['delete-alert'].setAttribute("hidden","hidden")
     },
-
+    sort(s){
+      if(s === this.sortBy) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      }
+      this.sortBy = s;
+      this.sortedProducts()
+    },
     async createNew(e){
       e.preventDefault()
       const requestOptions = {
@@ -119,7 +126,6 @@ export default {
           .then(data => this.notes.push(data.note));
       this.cancelNew()
     },
-
     async deleteNote(e){
       e.preventDefault()
       let id = this.checked.pop()
@@ -132,12 +138,30 @@ export default {
 
       this.notes = this.notes.filter(note => note.id !== id)
       this.cancelDelete(e)
+    },
+    sortedProducts(){
+      return this.notes.sort( (p1,p2) => {
+        let modifier = 1;
+        if(this.sortDirection === 'desc') modifier = -1;
+        if(p1[this.sortBy] < p2[this.sortBy]) return -1 * modifier; if(p1[this.sortBy] > p2[this.sortBy]) return modifier;
+        return 0;
+      });
     }
-
+  },
+  computed:{
+    isDisabled(){
+      return this.$refs.title.value.length > 0 && this.$refs.content.value.length > 0
+    }
   }
 }
 </script>
 
 <style>
+.asc:after{
+  content: "\25B2"
+}
 
+.desc:after{
+  content: "\25BC"
+}
 </style>
