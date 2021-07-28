@@ -1,6 +1,7 @@
 <template>
   <div id="app" class="bg-gray-100 h-screen text-gray-600 ">
 
+    <!--    STATISTICS box    -->
     <div class="statistic bg-white shadow-lg float-left grid grid-cols-3 gap-4 justify-between p-10 text-lg mt-10 ml-10"
          v-bind:class="{ disabled: disableBg }">
       <div id="total" class="justify-center items-center flex-col">
@@ -17,6 +18,7 @@
       </div>
     </div>
 
+    <!--    NOTE TABLE    -->
     <div class="note-table w-full float-left my-10 ml-10" v-bind:class="{ disabled: disableBg }">
       <div class="max-w-5xl">
         <table class="table-fixed shadow-lg">
@@ -41,10 +43,10 @@
             <td class="w-1/10 px-2 py-1 border-b border-gray-200"><input type="checkbox" class="checkbox"
                                                                          v-bind:value="note.id" v-model="checked"
                                                                          @change="deleteConfirmation"></td>
-            <td class="w-1/6 p-1 border-b border-gray-200 text-blue-800">{{ note.id }}</td>
-            <td class="w-1/3 p-1 border-b border-gray-200">{{ note.title }}</td>
-            <td class="w-1/3 p-1 border-b border-gray-200">{{ note.content }}</td>
-            <td class="w-1/6 p-1 border-b border-gray-200">{{ note.status }}</td>
+            <td class="w-1/6 p-2 border-b border-gray-200 text-blue-800">{{ note.id }}</td>
+            <td class="w-1/3 p-2 border-b border-gray-200">{{ note.title }}</td>
+            <td class="w-1/3 p-2 border-b border-gray-200">{{ note.content }}</td>
+            <td class="w-1/6 p-2 border-b border-gray-200">{{ note.status }}</td>
           </tr>
 
         </table>
@@ -57,6 +59,7 @@
       </div>
     </div>
 
+    <!--    NEW NOTE BOX    -->
     <div ref="new-note" class="absolute w-full h-full flex items-center justify-center"
          v-bind:class="{ hidden: !newNote, 'bg-gray-200 bg-opacity-70':disableBg, disabled: disableNew }">
       <div id="new-note" class="w-2/5 right-1/2 top-1/2p-10 bg-white shadow-xl border border-gray-200 p-10">
@@ -76,13 +79,22 @@
         </form>
       </div>
     </div>
-    <div class="absolute w-full h-full" v-bind:class="{ hidden: !deleteAlert, 'bg-gray-400 bg-opacity-70': deleteAlert }">
-      <div class="absolute alert float-left bg-red-600 w-3/5 p-2 text-white m-10 rounded-sm items-center" ref="delete-alert" >
+
+    <!--    ALERT    -->
+    <div class="absolute w-full h-full"
+         v-bind:class="{ hidden: !deleteAlert, 'bg-gray-400 bg-opacity-70': deleteAlert }">
+      <div class="absolute alert float-left bg-red-600 w-3/5 p-2 text-white m-10 rounded-sm items-center"
+           ref="delete-alert">
         <form>
-          <span  class="text-2xl px-1" >&#9888;</span>
+          <span class="text-2xl px-1">&#9888;</span>
           <span>Do you want to delete this note?</span>
-          <button class="border border-white rounded-sm w-1/12 py-1 float-right ml-2 hover:bg-red-700" id="no" @click="cancelDelete">No</button>
-          <button class="border border-white bg-white text-red-600 rounded-sm w-1/12 ml-2 py-1 float-right  hover:bg-gray-100" type="submit" id="yes" @click="deleteNote">Yes</button>
+          <button class="border border-white rounded-sm w-1/12 py-1 float-right ml-2 hover:bg-red-700" id="no"
+                  @click="cancelDelete">No
+          </button>
+          <button
+              class="border border-white bg-white text-red-600 rounded-sm w-1/12 ml-2 py-1 float-right  hover:bg-gray-100"
+              type="submit" id="yes" @click="deleteNote">Yes
+          </button>
         </form>
       </div>
     </div>
@@ -106,8 +118,8 @@ export default {
       contentIn: '',
       newNote: false,
       disableBg: false,
-      deleteAlert:false,
-      disableNew:false
+      deleteAlert: false,
+      disableNew: false
     }
   },
   created() {
